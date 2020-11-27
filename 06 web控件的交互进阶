@@ -160,4 +160,147 @@ def test_dragdrop(self):
     action = ActionChains(self.driver)
     action.click_and_hold(ele_drag).move_to_element(ele_drag2).release().perform()
     sleep(3)
+    
+   6.ActionChains用法4
+1）用法4：ActionChains模拟按键方法：
+模拟按键有多种方法，能用win32 api来实现，能用Sendkeys来实现，也可以用selenium的WebElement对象的send_keys()方法来实现，这里ActionChains类也提供了几个模拟按键的方法。
+2）基本用法：
+Action = ActionChains(driver)
+action.send_keys(Keys.BACK_SPACE)
+或者action.key_down(Keys.CONTROL).send_keys('a').key_up(Keys.CONTROL)
+action.perform()
+3）测试案例：
+打开网址：http://sahitest.com/demo/label.htm
+定位两个输入框 e1，e2
+向输入框e1中输入文字：username
+使用全选，复制，粘贴到输入框e2中
+示例1：
+在base中写一个通用的类：
+from  selenium import webdriver
+
+class Base():
+    def setup(self):
+        self.driver = webdriver.Chrome()
+        self.driver.implicitly_wait(5)
+        self.driver.maximize_window()
+
+
+    def teardown(self):
+        self.driver.quit()
+
+
+在执行的类中继承：
+from time import sleep
+
+import pytest
+from selenium.webdriver import ActionChains
+from selenium.webdriver.common.keys import Keys
+
+from selenium_code.base import Base
+from selenium import webdriver
+
+class TestActionKeys(Base):
+    def test_action_key(self):
+        self.driver.get("http://sahitest.com/demo/")
+        self.driver.find_element_by_link_text('Label Page').click()
+        text1 =self.driver.find_element_by_xpath('/html/body/label[1]/input')
+        text2 = self.driver.find_element_by_xpath('/html/body/label[2]/table/tbody/tr/td[2]/input')
+        action = ActionChains(self.driver)
+        text1.click()
+        action.send_keys("AAAA").perform()
+        action.key_down(Keys.CONTROL).send_keys('a').key_up(Keys.CONTROL).perform()
+        action.key_down(Keys.CONTROL).send_keys('c').key_up(Keys.CONTROL).perform()
+        text2.click()
+        action.key_down(Keys.CONTROL).send_keys('v').key_up(Keys.CONTROL).perform()
+        sleep(3)
+
+
+示例2：
+from time import sleep
+
+from selenium.webdriver import ActionChains
+from selenium.webdriver.common.keys import Keys
+
+from selenium_code.base import Base
+
+class TestActionKeys02(Base):
+    def test_action_keys02(self):
+        self.driver.get("http://sahitest.com/demo/")
+        self.driver.find_element_by_link_text('Label Page').click()
+        text1 = self.driver.find_element_by_xpath('/html/body/label[1]/input')
+        action = ActionChains(self.driver)
+        text1.click()
+        action.send_keys("username").pause(1)
+        action.send_keys(Keys.SPACE).pause(1)
+        action.send_keys("tom").pause(1)
+        action.send_keys(Keys.BACK_SPACE).perform()
+        sleep(3)
+
+
+（三）TouchActions用法
+1.介绍：
+https://selenium-python.readthedocs.io/api.html#module-selenium.webdriver.common.touch_actions
+1）TouchActions类似于ActionChains，ActionChains只是针对PC端程序鼠标模拟的一系列操作，对H5页面操作时，无效的。TouchActions可以对H5页面操作，通过TouchAction可以实现点击，滑动，拖拽，多点触控，以及模拟手势的各种操作。
+2）手势控制：
+tap ——在指定元素上敲击
+double_tap——在指定元素上双敲击
+tap_and_hold——在指定元素上点击但不释放
+move——手势移动指定偏移（未释放）
+release——释放手势
+scroll——手势点击并滚动
+scroll_from_element——从某个元素位置开始手势点击并滚动（向下滑动为负数，向上滑动为正数）
+long_press——长按元素
+flick——手势滑动
+flick_element——从某个元素位置开始手势滑动（向上滑动为负数，向上滑动为负数）
+perform——执行
+2.TouchAction实例
+1）打开Chrome
+2）打开URL：http://www.baidu.com
+3）向搜索框中输入‘selenium测试’
+4）通过TouchAction点击搜索框
+5）滑动到底部，点击下一页
+6）关闭Chrome
+
+示例：
+在base中写一个通用的类：
+from  selenium import webdriver
+
+class Base():
+    def setup(self):
+        self.driver = webdriver.Chrome()
+        self.driver.implicitly_wait(5)
+        self.driver.maximize_window()
+
+
+    def teardown(self):
+        self.driver.quit()
+
+
+在执行的类中继承：
+from time import sleep
+
+from selenium.webdriver import TouchActions
+
+from selenium_code.base import Base
+
+
+class TestTouchAction(Base):
+    def test_touch_action(self):
+        self.driver.get("http://www.baidu.com")
+        ele=self.driver.find_element_by_id("kw").send_keys('selenium测试')
+        ele_click=self.driver.find_element_by_id("su")
+        action = TouchActions(self.driver)
+        action.tap(ele_click)
+        action.perform()
+        action.scroll_from_element(ele_click,0,10000).perform()
+        sleep(3)
+
+
+注：如果不知道偏移量，就输入一个非常大的值就可以了。
+注意：
+如果页面报不是标准w3c的问题，可在setup方法中的driver上添加一个option，改为：
+def setup(self):
+    option = webdriver.ChromeOptions()
+    option.add_experimental_option("w3c",False)
+    self.driver = webdriver.Chrome(options=option)
 
