@@ -1,0 +1,34 @@
+七、表单操作
+（一）表单定义
+1.什么是表单？
+表单是一个包含表单元素的区域。
+表单元素是允许用户在表单中（比如：文本域、下拉列表、单选框、复选框等等）输入信息的元素。
+表单使用表单标签（<form>）定义。例如：<form><input / ></form>
+2.操作表单元素步骤：
+1）首先要定位到表单元素
+2）然后去操作元素（清空，输入点击等）
+示例：
+from time import sleep
+
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+
+
+class TestForm():
+    def setup(self):
+        self.driver = webdriver.Chrome()
+        self.driver.implicitly_wait(5)
+        self.driver.maximize_window()
+
+    def teardown(self):
+        self.driver.quit()
+
+    def test_form(self):
+        self.driver.get("https://testerhome.com/account/sign_in")
+        sleep(2)
+        self.driver.find_element(By.ID,'user_login').send_keys("huahua")
+        self.driver.find_element(By.ID,'user_password').send_keys("12334345")
+        self.driver.find_element(By.XPATH,'//*[@id="new_user"]//label').click()
+        self.driver.find_element(By.XPATH,'//*[@class="btn btn-primary btn-lg btn-block"]').click()
+        sleep(5)
+        
