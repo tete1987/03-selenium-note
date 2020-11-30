@@ -1,0 +1,74 @@
+十一、上传文件、弹框处理
+（一）文件上传
+1.input标签可以直接使用send_keys(文件地址)上传文件
+2.用法：
+el = driver.find_element_by_id('上传按钮id')
+el.send_keys(“文件路径+文件名”)
+
+
+3.文件上传实例：
+1）测试案例：
+打开百度图片地址：https://image.baidu.com
+识别上传按钮
+点击上传按钮
+将本地的图片文件上传
+
+示例：
+from time import sleep
+
+from selenium.webdriver.common.by import By
+
+from selenium_code.base import Base
+import allure
+
+@allure.feature("百度上传图片")
+class TestUpload(Base):
+    def test_upload(self):
+        self.driver.get("https://image.baidu.com/")
+        self.driver.find_element(By.XPATH,'//*[@id="sttb"]/img[1]').click()
+        sleep(2)
+
+        self.driver.find_element(By.ID,'uploadImg').send_keys("./result/b.png")
+        sleep(5)
+
+
+（二）弹框处理机制
+1.在页面操作中有时会遇到JavaScript所生成的alert、confirm以及prompt弹框，可以使用switch_to.alert()方法定位到。然后使用text/accept/dismiss/send_keys 等方法进行操作。参考教你分辨alert、window、div模态框，以及操作。
+2.操作alert常用的方法：
+switch_to.alert()：获取当前页面上的警告框
+text：返回alert/confirm/prompt
+accept()：接受现有警告框
+dismiss()：解散现有警告框
+send_keys(keysToSend)：发送文本至警告框。keysToSend：将文本发送至警告框。
+
+注：div的页面比较复杂，alert通常只有确定和取消两个选项。
+3.alert窗口处理案例
+1）打开网页：https://www.runoob.com/try/try.php?filename=jqueryui-api-droppable
+2）操作窗口右侧页面，将元素1拖拽到元素2时，会有一个alert弹框，点击弹框中的“确定”
+3）然后再按“点击运行”
+4）关闭网页
+示例：
+from time import sleep
+
+from selenium.webdriver import ActionChains
+
+from selenium_code.base import Base
+
+
+class TestAlert(Base):
+    def test_alert(self):
+        self.driver.get("https://www.runoob.com/try/try.php?filename=jqueryui-api-droppable")
+        self.driver.switch_to.frame("iframeResult")
+        drag =self.driver.find_element_by_id("draggable")
+        drop =self.driver.find_element_by_id("droppable")
+        action = ActionChains(self.driver)
+        action.drag_and_drop(drag,drop).perform()
+        print("点击alert确认")
+        sleep(3)
+        self.driver.switch_to.alert.accept()
+        sleep(2)
+        self.driver.switch_to.default_content()
+        self.driver.find_element_by_id("submitBTN").click()
+        sleep(3)
+
+
