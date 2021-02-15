@@ -145,3 +145,19 @@ class TestSelenium():
 ```
 
 注：隐式等待只能判断元素是否存在，无法判断元素是否可点击。
+
+### 其他笔记链接
+- [04 selenium三种等待方式](https://github.com/tete1987/04-selenium/blob/main/04%20selenium%E4%B8%89%E7%A7%8D%E7%AD%89%E5%BE%85%E6%96%B9%E5%BC%8F.md)
+
+- [05 web控件定位与常见操作](https://github.com/tete1987/04-selenium/blob/main/05%20web%E6%8E%A7%E4%BB%B6%E5%AE%9A%E4%BD%8D%E4%B8%8E%E5%B8%B8%E8%A7%81%E6%93%8D%E4%BD%9C.md)
+
+- [06 web控件的交互进阶](https://github.com/tete1987/04-selenium/blob/main/06%20web%E6%8E%A7%E4%BB%B6%E7%9A%84%E4%BA%A4%E4%BA%92%E8%BF%9B%E9%98%B6.md)
+
+- [07 表单操作](https://github.com/tete1987/04-selenium/blob/main/07%20%E8%A1%A8%E5%8D%95%E6%93%8D%E4%BD%9C.md)
+
+- [08 多窗口处理与网页frame](https://github.com/tete1987/04-selenium/blob/main/08%20%E5%A4%9A%E7%AA%97%E5%8F%A3%E5%A4%84%E7%90%86%E4%B8%8E%E7%BD%91%E9%A1%B5frame.md)
+
+- [09 selenium处理多浏览器](https://github.com/tete1987/04-selenium/blob/main/09%20selenium%E5%A4%84%E7%90%86%E5%A4%9A%E6%B5%8F%E8%A7%88%E5%99%A8.md)
+- [10 执行JavaScript脚本](https://github.com/tete1987/04-selenium/blob/main/10%20%E6%89%A7%E8%A1%8CJavaScript%E8%84%9A%E6%9C%AC.md)
+- [11 上传文件、弹框处理](https://github.com/tete1987/04-selenium/blob/main/11%20%E4%B8%8A%E4%BC%A0%E6%96%87%E4%BB%B6%E3%80%81%E5%BC%B9%E6%A1%86%E5%A4%84%E7%90%86.md)
+- [12 PageObject模式](https://github.com/tete1987/04-selenium/blob/main/12%20PageObject%E6%A8%A1%E5%BC%8F.md)
