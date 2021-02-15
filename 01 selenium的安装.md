@@ -42,7 +42,7 @@ pip install selenium
 - 导入到环境变量中
 
 5.python中如何使用
-```
+```python
 import selenium
 from selenium import webdriver
 def test_selenium()：
