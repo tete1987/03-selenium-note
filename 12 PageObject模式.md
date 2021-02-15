@@ -1,27 +1,38 @@
-十二、PageObject模式
-（一）pageObject原则
+# 十二、PageObject模式
+## （一）pageObject原则
 1.定义：
 PageObject设计模式：是将某个页面的所有"元素（包含控件）属性"及"元素操作"封装在1个类(Class)里面，以page为单位进行管理。
+
 2.原则：
+
 1）用公共方法代表UI所提供的功能
+
 2）方法应该返回其他的PageObject或者返回用于断言的数据
+
 3）同样的行为不同的结果可以建模为不同的方法
+
 4）不要在方法内加断言
+
 5）不要暴露页面内部的元素给外部
+
 6）不需要建模UI内的所有元素，只为页面中重要的元素创建page类
 
-（二）selenium企业微信实战
+## （二）selenium企业微信实战
 1.复用已有浏览器功能：
-1）浏览器：（在cmd中启动）
-chrome -remote-debugging-port=9222
 
+1）浏览器：（在cmd中启动）
+```
+chrome -remote-debugging-port=9222
+```
 2）python：
+```
 chrome_arg = webdriver.ChromeOptions()
 chrome_arg.debugger_address='127.0.0.1:9222'
 self.driver=webdriver.Chrome(option=chrome_arg)
-
+```
 
 示例：
+```python
 from time import sleep
 
 from selenium import webdriver
@@ -42,11 +53,14 @@ class TestChrome:
         self.driver.get("https://work.weixin.qq.com/wework_admin/frame")
         self.driver.find_element(By.XPATH,'//*[@id="menu_contacts"]/span').click()
         sleep(3)
-
+```
 
 2.使用cookie登录浏览器
+
 1）先使用复用浏览器的方式登录，并获取cookie，打印出来（print(self.driver.get_cookies())）
+
 2）再将cookie存到变量中，其中 expiry字段是有效期，可能会影响登录，所以需要先遍历一下，然后删除，代码如下：
+```python
 class TestChrome:
     def setup_method(self, method):
         option = Options()
@@ -123,8 +137,10 @@ class TestChrome:
         self.driver.find_element(By.XPATH, '//*[@id="menu_contacts"]/span').click()
         sleep(3)
 
+```
 
 3）将cookie值保存到shelve中，相当于一个小型数据存储
+```python
 import shelve
 from time import sleep
 
@@ -159,29 +175,37 @@ class TestChrome:
         db.close()
         self.driver.find_element(By.XPATH, '//*[@id="menu_contacts"]/span').click()
         sleep(3)
+```
 
-
-（三）使用PageObject模式进行测试用例设计
+## （三）使用PageObject模式进行测试用例设计
 1.企业微信首页pageObject
+
 1）立即注册
-点击立即注册
-return 立即注册page
+- 点击立即注册
+- return 立即注册page
+
 2）企业登录
-点击企业登录
-return 企业登录pageObject
+- 点击企业登录
+- return 企业登录pageObject
+
 2.登录PageObject
+
 1）扫码
-用手机扫码
+- 用手机扫码
+
 2）立即注册
-点击立即注册
-return 立即注册page
+- 点击立即注册
+- return 立即注册page
+
 3.立即注册pageObject
+
 1）填表
-输入文本
-下拉框
-点击确定
+- 输入文本
+- 下拉框
+- 点击确定
 
 示例：
+```python
 1）新建index.py：
 from selenium import webdriver
 from selenium.webdriver.common.by import By
@@ -205,8 +229,11 @@ class Index:
         #点击立即注册
         self._driver.find_element(By.CSS_SELECTOR,'.index_head_info_pCDownloadBtn').click()
         return Register(self._driver)
+        
+```
 
 2）新建login.py：
+```python
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
 
@@ -226,8 +253,10 @@ class Login:
         #点击立即注册
         self._driver.find_element(By.CSS_SELECTOR,'.login_registerBar_link').click()
         return Register()
+```
 
 3）新建register.py：
+```python
 from time import sleep
 
 from selenium.webdriver.common.by import By
@@ -248,8 +277,9 @@ class Register:
         sleep(3)
         self._driver.quit()
         return True
-
+```
 4）新建执行的测试用例：test_register.py
+```python
 from selenium_code.wx_code01.index import Index
 
 
@@ -259,12 +289,14 @@ class TestRegister:
 
     def test_register(self):
         self.index.goto_register().register()
+```
 
 
-
-（四）使用PageObject模式进行测试用例设计2（企业微信增加成员）
+### （四）使用PageObject模式进行测试用例设计2（企业微信增加成员）
 1.初始版本：
+
 1).新建首页文件（main_pege.py）：
+```python
 from selenium.webdriver.common.by import By
 
 from selenium_code.wx_PageObject02.Page.addMember import AddMember
@@ -284,8 +316,10 @@ class Index:
     def goto_add_member(self):
         self._driver.find_element(By.CSS_SELECTOR,'.index_service_cnt_item:nth-child(1)').click()
         return AddMember(self._driver)
+```
 
 2)新建“添加成员”的文件(addMember.py)：
+```python
 from time import sleep
 
 from selenium.webdriver.common.by import By
@@ -304,9 +338,10 @@ class AddMember:
         self._driver.find_element(By.CSS_SELECTOR,'.js_btn_save').click()
         sleep(2)
         return True
-
+```
 
 3)新建添加成员的测试用例(test_addMember.py)
+```python
 from selenium_code.wx_PageObject02.Page.main_page import Index
 
 
@@ -316,10 +351,12 @@ class TestAddMember:
 
     def test_addMember(self):
         assert self.main_page.goto_add_member().add_member()
-
+```
 
 2.优化断言版本：
+
 1)修改addMember.py 文件
+```python
 from time import sleep
 
 from selenium.webdriver.common.by import By
@@ -347,8 +384,9 @@ class AddMember:
             list.append(ele.get_attribute("title"))
 
         return list
-
+```
 或
+```python
 from time import sleep
 
 from selenium.webdriver.common.by import By
@@ -373,8 +411,9 @@ class AddMember:
         elements = self._driver.find_elements(By.CSS_SELECTOR,'.member_colRight_memberTable_td:nth-child(2)')
         return [ele.get_attribute("title") for ele in elements]
 
-
+```
 2)修改test_addMember.py文件
+```python
 from time import sleep
 
 from selenium_code.wx_PageObject02.Page.main_page import Index
@@ -389,10 +428,12 @@ class TestAddMember:
         add_member.add_member()
         sleep(2)
         assert "AAAA" in add_member.get_member()
-
+```
 
 3.优化公共类版本（将公共的类或方法写一个base_page.py文件中）：
+
 1）base_page文件的内容：
+```python
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.remote.webdriver import WebDriver
@@ -413,9 +454,10 @@ class BasePage:
 
         if self._base_url != "" :
             self._driver.get(self._base_url)
-
+```
 
 2）修改main_page.py文件：
+```python
 from time import sleep
 
 from selenium import webdriver
@@ -436,9 +478,10 @@ class Index(BasePage):
     def goto_add_member(self):
         self._driver.find_element(By.CSS_SELECTOR,'.index_service_cnt_item:nth-child(1)').click()
         return AddMember(self._driver)
-
+```
 
 3）修改add_memeber.py文件：
+```python
 from time import sleep
 
 from selenium.webdriver.common.by import By
@@ -465,10 +508,12 @@ class AddMember(BasePage):
             list.append(ele.get_attribute("title"))
 
         return list
-
+```
 
 4.继续优化：将查找元素进行封装：
+
 1）修改base_page.py 文件：
+```python
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.remote.webdriver import WebDriver
@@ -496,9 +541,10 @@ class BasePage:
 
     def finds(self,by ,locator):
         return self._driver.find_elements(by ,locator)
-
+```
 
 2）修改addMember.py 文件
+```python
 from time import sleep
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
@@ -524,9 +570,10 @@ class AddMember(BasePage):
             list.append(ele.get_attribute("title"))
 
         return list
-
+```
 
 3）修改main_page.py 文件
+```python
 from time import sleep
 from selenium import webdriver
 from selenium.webdriver.common.by import By
@@ -543,10 +590,12 @@ class Index(BasePage):
     def goto_add_member(self):
         self.find(By.CSS_SELECTOR,'.index_service_cnt_item:nth-child(1)').click()
         return AddMember(self._driver)
-
+```
 
 5.加入显式等待，并进行封装：
+
 1）修改base_page.py 文件：
+```python
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.remote.webdriver import WebDriver
@@ -578,9 +627,10 @@ class BasePage:
 
     def wati_for_click(self,locator,time=10):
         WebDriverWait(self._driver,time).until(expected_conditions.element_to_be_clickable(locator))
-
+```
 
 2）修改addMember.py 文件
+```python
 from time import sleep
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
@@ -615,9 +665,10 @@ class AddMember(BasePage):
             if cur_page == total_page:
                 return False
             self.find(By.CSS_SELECTOR,'.js_next_page').click()
-
+```
 
 3）修改main_page.py 文件
+```python
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions
@@ -636,9 +687,10 @@ class Index(BasePage):
         self.wati_for_click((By.LINK_TEXT,'添加成员'))
         self.find(By.LINK_TEXT,'添加成员').click()
         return AddMember(self._driver)
-
+```
 
 4）修改test_addMember.py
+```python
 from selenium_code.wx_PageObject02.Page.main_page import Index
 
 
@@ -651,4 +703,4 @@ class TestAddMember():
         add_member.add_member()
         assert add_member.get_member("李四")
 
-
+```
