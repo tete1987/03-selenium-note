@@ -121,8 +121,11 @@ https://addons.mazilla.org/en-GB/firefox/addon/selenium-ide/version/
 
 ### （二）编写测试用例
 1.打开页面： https://testerhome.com/
+
 2.点击-社团  标签
+
 3.访问顶部的第一个帖子
+
 ```python
 import pytest
 from selenium import webdriver
