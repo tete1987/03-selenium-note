@@ -46,7 +46,8 @@ JSON.stringify(performance.timing)
 
 可以先在页面的console中测试JavaScript，查看是否可以成功。
 
-![image](A931B0A1277A45689A7A83147A97737A)
+
+![selenium-js1](https://github.com/tete1987/picture_resource/blob/master/selenium/selenium-js1.png)
 
 示例1：
 ```python
@@ -112,7 +113,10 @@ class TestJs(Base):
 - 修改出发日期为2020-12-30
 - 打印出发日期
 - 关闭网址
-- 同样可以现在页面的console中进行测试：
+
+同样可以现在页面的console中进行测试：
+
+![selenium-js2](https://github.com/tete1987/picture_resource/blob/master/selenium/selenium-js2.png)
 
 示例3：
 ```python
